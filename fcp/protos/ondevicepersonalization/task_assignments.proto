@@ -18,6 +18,7 @@ syntax = "proto3";
 package google.ondevicepersonalization.federatedcompute.proto;
 
 import "fcp/protos/federatedcompute/common.proto";
+import "fcp/protos/plan.proto";
 import "fcp/protos/ondevicepersonalization/eligibility_spec.proto";
 
 option java_package = "com.google.ondevicepersonalization.federatedcompute.proto";
@@ -51,7 +52,7 @@ message CreateTaskAssignmentResponse {
 
 // When client (device) is accepted for the current task, this data structure
 // carries information necessary to begin task execution.
-// Next Id: 11
+// Next Id: 12
 message TaskAssignment {
   // population name.
   string population_name = 1;
@@ -86,6 +87,9 @@ message TaskAssignment {
 
   // The signature of eligibility task.
   Signature eligibility_task_info_signature = 10;
+
+  // Specifies an example selection procedure. Can be used by model versioning.
+  google.internal.federated.plan.ExampleSelector example_selector = 11;
 }
 
 // The signature information. Device can verify the signature to check integrity of
@@ -95,7 +99,7 @@ message Signature {}
 // Report result request.
 // The url to report result under v1 API is:
 // https://{host}/taskassignment/v1/population/{populationName}/task/{taskId}/aggregation/{aggregationId}/task-assignment/{assignmentId}:report-result
-// Next Id: 2
+// Next Id: 3
 message ReportResultRequest {
   enum Result {
     // Unknown
@@ -109,30 +113,28 @@ message ReportResultRequest {
 
     // Failed due to eligibility task is not qualified.
     NOT_ELIGIBLE = 3;
+
+    // Failed due to example generation failure
+    FAILED_EXAMPLE_GENERATION = 4;
+
+    // Failed due to model computation error
+    FAILED_MODEL_COMPUTATION = 5;
+
+    // Failed due to model ops error
+    FAILED_OPS_ERROR = 6;
   }
 
   Result result = 1;
+
+  // The client's capabilities when uploading result.
+  google.internal.federatedcompute.v1.ResourceCapabilities resource_capabilities = 2;
 }
 
 // Report result response.
 message ReportResultResponse {
   // Upload result instruction on succeeded.
-  UploadInstruction upload_instruction = 1;
+  google.internal.federatedcompute.v1.UploadInstruction upload_instruction = 1;
 
   // Rejection reason.
   google.internal.federatedcompute.v1.RejectionInfo rejection_info = 2;
-}
-
-// The upload instruction.
-// Next id: 4
-message UploadInstruction {
-  // upload file path.
-  string upload_location = 1;
-
-  // extra head for uploading.
-  map<string, string> extra_request_headers = 2;
-
-  // The compression used for resource, or unset if the data is
-  // uncompressed.
-  google.internal.federatedcompute.v1.ResourceCompressionFormat compression_format = 3;
 }

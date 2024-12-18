@@ -49,6 +49,7 @@ java_library_static {
     srcs: [
         "fcp/protos/ondevicepersonalization/task_assignments.proto",
         "fcp/protos/ondevicepersonalization/eligibility_spec.proto",
+        "fcp/protos/ondevicepersonalization/exception_reporting.proto",
         "fcp/protos/federatedcompute/common.proto",
         "fcp/protos/plan.proto",
         "fcp/client/**/*.proto",
@@ -184,11 +185,11 @@ cc_test {
     ],
     static_libs: [
         "federated-compute-cc-proto-lite",
-        "libgmock",
+        "libabsl",
         "libbase_ndk",
-        "libprotobuf-cpp-lite-ndk",
+        "libgmock",
         "liblog",
-        "tensorflow_abseil",
+        "libprotobuf-cpp-lite-ndk",
     ],
     whole_static_libs: [
         "libfederatedcompute",
